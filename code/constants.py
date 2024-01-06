@@ -1,4 +1,4 @@
-DIRECTORY = "large"
+DIRECTORY = "data/large"
 
 PEOPLE_FILE_NAME = "people.csv"
 MOVIES_FILE_NAME = "movies.csv"
