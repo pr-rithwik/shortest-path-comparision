@@ -3,7 +3,10 @@ import networkx as nx
 
 from .process_data import DataProcessor
 from .validate_data import DataValidator
-from .constants import DIRECTORY, PATH_CONNECTOR, DIVIDING_OUTPUT_LINE
+from .constants import (
+    DIRECTORY, PATH_CONNECTOR, DIVIDING_OUTPUT_LINE, TEXT_GREEN_COLOR,
+    TEXT_YELLOW_COLOR, TEXT_DEFAULT_COLOR, DOLLAR_SIGN
+)
 
 
 class Solution():
@@ -12,16 +15,46 @@ class Solution():
         self.from_actor = from_actor
         self.to_actor = to_actor
 
-    def run_solution(self):
+        self.from_actor_id = None
+        self.to_actor_id = None
+
+        self.load_data()
+        self.update_actor_ids(from_actor, to_actor)
+
+    def load_data(self):
         self.processor.load_data()
         self.processor.update_map_details()
 
-    def get_shortest_path(self, from_actor_id, to_actor_id):
+    def update_actor_ids(self, from_actor=None, to_actor=None):
+        if from_actor is not None:
+            self.from_actor = from_actor
+            self.from_actor_id = self._get_actor_id(from_actor)
+        
+        if to_actor is not None:
+            self.to_actor = to_actor
+            self.to_actor_id = self._get_actor_id(to_actor)
+
+    def get_shortest_path(self):
         try:
-            return nx.bidirectional_shortest_path(self.processor.G, from_actor_id, to_actor_id)
+            return nx.bidirectional_shortest_path(
+                self.processor.G, self.from_actor_id, self.to_actor_id)
         except NetworkXNoPath:
             return None
     
+    def get_djikstra_shortest_path(self):
+        try:
+            return nx.dijkstra_path(
+                self.processor.G, self.from_actor_id, self.to_actor_id)
+        except NetworkXNoPath:
+            return None
+
+    def get_bidirectional_djikstra_shortest_path(self):
+        try:
+            return nx.bidirectional_dijkstra(
+                self.processor.G, self.from_actor_id, self.to_actor_id)[1]
+        except NetworkXNoPath:
+            return None
+
     def process_output(self, path):
         if path is None:
             print(f"There is NO PATH between {self.from_actor} and {self.to_actor}.")
@@ -29,8 +62,8 @@ class Solution():
             people = [self.processor.person_id_name_map[each] for each in path[::2]]
             movies = [self.processor.movie_id_name_map[each] for each in path[1::2]]
 
-            colors = ["\033[92m", "\033[93m"]
-            reset_color = "\033[0m"
+            colors = [TEXT_GREEN_COLOR, TEXT_YELLOW_COLOR]
+            reset_color = TEXT_DEFAULT_COLOR
             degree = len(path) // 2
             
             path = PATH_CONNECTOR.join(
@@ -41,22 +74,42 @@ class Solution():
             print(f"The path is: {path}")
             print(DIVIDING_OUTPUT_LINE)
 
+    def _get_actor_id(self, actor_name):
+        actor_name = actor_name.lower()
+        actor_id_detail = self.processor.get_actor_id_detail(actor_name)
+        if len(actor_id_detail) == 1:
+            actor_id = actor_id_detail[0]["actor_id"]
+        else:
+            actor_id = self._select_right_actor_id(actor_name)
+        
+        return actor_id
+
+    def _select_right_actor_id(self, actor_name):
+        person_ids = []
+        for each in self.person_name_id_birth_map[actor_name]:
+            id_, birth = each.split(DOLLAR_SIGN)
+            person_ids.append(id_)
+            print(f"ID: {id_}, Name: {actor_name}, Birth: {birth}")
+        
+        person_id = input("Intended Person ID: ")
+        return person_id if person_id in person_ids else None
+
+
 def get_actor_names():
     return input("First Name: "), input("Second Name: ")
 
 def main():
-    from_actor, to_actor = get_actor_names() 
-    # from_actor, to_actor = "Cary Elwes", "James Dean"
+    # from_actor, to_actor = get_actor_names() 
+    from_actor, to_actor = "Cary Elwes", "Jack Nicholson"
 
     solution = Solution(from_actor, to_actor)
-    solution.processor.load_data()
-    solution.processor.update_map_details()
+
+    validator = DataValidator(solution=solution)
+    validator.validate_actor_names()
     
-    validator = DataValidator(data_processor=solution.processor)
-    from_actor_id, to_actor_id = validator.validate_actor_names(from_actor, to_actor)
-    
-    path = solution.get_shortest_path(from_actor_id, to_actor_id)
-    
+    # path = solution.get_shortest_path()
+    path = solution.get_bidirectional_djikstra_shortest_path()
+    print(path, "**"*10)
     solution.process_output(path)
 
 

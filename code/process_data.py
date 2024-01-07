@@ -63,3 +63,11 @@ class DataProcessor:
             lambda x: f"{MOVIE_PREFIX}{x}")
         
         return stars_df
+    
+    def get_actor_id_detail(self, actor_name):
+        id_details = []
+        for each in self.person_name_id_birth_map[actor_name]:
+            id_, year = each.split(DOLLAR_SIGN)
+            id_details.append({"actor_id": id_, "year": year})
+
+        return id_details
