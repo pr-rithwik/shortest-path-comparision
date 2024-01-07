@@ -106,6 +106,16 @@ class Solution():
 def get_actor_names():
     return input("First Name: "), input("Second Name: ")
 
+def get_solution_func(solution):
+    function_map = {
+        "shortest_path": solution.get_shortest_path,
+        "djikstra_path": solution.get_djikstra_shortest_path,
+        "bidirectional_djikstra_path": solution.get_bidirectional_djikstra_shortest_path,
+        "bellman_ford_path": solution.get_bellman_ford_path
+    }
+    
+    return function_map["bellman_ford_path"]
+
 def main():
     # from_actor, to_actor = get_actor_names() 
     from_actor, to_actor = "Cary Elwes", "Jack Nicholson"
@@ -115,9 +125,9 @@ def main():
     validator = DataValidator(solution=solution)
     validator.validate_actor_names()
     
-    # path = solution.get_shortest_path()
-    path = solution.get_bidirectional_djikstra_shortest_path()
-    print(path, "**"*10)
+    solution_func = get_solution_func(solution)
+    path = solution_func()
+
     solution.process_output(path)
 
 
