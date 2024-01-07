@@ -39,7 +39,7 @@ class DataValidator:
     def select_right_actor_id(self, actor_name):
         person_ids = []
         for each in self.person_name_id_birth_map[actor_name]:
-            id_, birth = each.split(self.column_connector)
+            id_, birth = each.split(DOLLAR_SIGN)
             person_ids.append(id_)
             print(f"ID: {id_}, Name: {actor_name}, Birth: {birth}")
         
