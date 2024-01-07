@@ -48,11 +48,24 @@ def test_bidirectional_djikstra_shortest_path():
         solution.process_output(path)
 
 
+def test_bellman_ford_path():
+    actor_pairs = get_actors()
+    for each_pair in actor_pairs:
+        solution = Solution(*each_pair)
+        
+        validator = DataValidator(solution=solution)
+        validator.validate_actor_names()
+        
+        path = solution.get_bellman_ford_path()
+        solution.process_output(path)
+
+
 def main():
     functions = [
         test_bidirectional_shortest_path,
         test_djikstra_shortest_path,
-        test_bidirectional_djikstra_shortest_path
+        test_bidirectional_djikstra_shortest_path,
+        test_bellman_ford_path
     ]
 
     examples_count = len(get_actors())

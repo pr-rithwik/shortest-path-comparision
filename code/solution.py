@@ -55,9 +55,17 @@ class Solution():
         except NetworkXNoPath:
             return None
 
+    def get_bellman_ford_path(self):
+        try:
+            return nx.bellman_ford_path(
+                self.processor.G, self.from_actor_id, self.to_actor_id)
+        except NetworkXNoPath:
+            return None
+
     def process_output(self, path):
         if path is None:
             print(f"There is NO PATH between {self.from_actor} and {self.to_actor}.")
+            print(DIVIDING_OUTPUT_LINE)
         else:
             people = [self.processor.person_id_name_map[each] for each in path[::2]]
             movies = [self.processor.movie_id_name_map[each] for each in path[1::2]]
