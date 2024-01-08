@@ -1,8 +1,7 @@
 from networkx import NetworkXNoPath
 import networkx as nx
 
-from .process_data import DataProcessor
-from .validate_data import DataValidator
+from . import DataProcessor, DataValidator
 from .constants import (
     DIRECTORY, PATH_CONNECTOR, DIVIDING_OUTPUT_LINE, TEXT_GREEN_COLOR,
     TEXT_YELLOW_COLOR, TEXT_DEFAULT_COLOR, DOLLAR_SIGN
