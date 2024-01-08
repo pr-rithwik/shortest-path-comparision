@@ -8,10 +8,10 @@ According to the `Six Degrees of Kevin Bacon` game, anyone in the Hollywood film
 
 
 ### Algorithms Considered
-- BFS
-- Djikstra
-- Bellman-Ford
-- Floyd-Warshall
+- default Bidirectional algorithm
+- Djikstra algorithm
+- Djikstra Bidirectional algorithm
+- Bellman-Ford algorithm
 
 ### Overview of Procedure
 - We are framing this as a Search Problem. 
